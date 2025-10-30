@@ -1,0 +1,93 @@
+
+Commands:
+	- sh spanning-tree
+	- spanning-tree vlan # root primary or secondary
+	- spanning-tree vlan # cost <1-200000000>
+	- spanning-tree vlan # port-priority <0-224>
+	- PortFast Commends
+		+ spanning-tree portfast (Int Config)
+		+ spanning-tree portfast default (Global Config)
+		- sh spanning-tree int # detail
+	- BPDU Guard
+		+ spanning-tree bpduguard enable (Int Config)
+		+ spanning-tree portfast bpduguard default (Global Config)
+		- sh spanning-tree int # detail
+1.
+	switch #1:
+		vlan 1:
+			f0/1: A | BLK
+			f0/2: D | FWD
+			f0/3: R | FWD
+			priority id: 32769
+		vlan 2:
+			f0/1: A | BLK
+			f0/2: D | FWD
+			f0/3: R | FWD
+			priority id: 32770	
+	
+	switch #2:
+		vlan 1:
+			F0/1: D | FWD
+			f0/2: D | FWD
+			f0/3: D | FWD
+			Priority ID: 32769
+		vlan 2:
+			F0/1: D | FWD
+			f0/2: D | FWD
+			f0/3: D | FWD
+			priority id: 32770
+	switch #3:
+		vlan 1:
+			f0/1: D | FWD
+			f0/2: R | FWD
+			f0/3: D | FWD
+			priority ID: 32769
+		vlan 2:
+			f0/1: D | FWD
+			f0/2: R | FWD
+			priority id: 32770
+
+	switch #4:
+		vlan 1:
+			f0/1: R | FWD
+			f0/2: A | BLK
+			priority id: 32769
+		vlan 2:
+			f0/1: R | FWD
+			f0/2: A | BLK
+			f0/3: D | FWD
+			priority id: 32770
+
+	CURRENT ROOT BRIDGE: Switch 2
+
+2.
+	switch #1:
+		vlan 1:
+			f0/1: D | FWD
+			f0/2: D | FWD
+			f0/3: D | FWD
+		vlan 2:
+			f0/1: D | FWD
+			f0/2: D | FWD
+			f0/3: D | FWD
+	switch #2: 
+		vlan 1:
+			f0/1: D | FWD
+			f0/2: D | FWD
+			f0/3: R | FWD
+		vlan 2: 
+			f0/1: D | FWD
+			f0/2: D | FWD
+			f0/3: D | FWD
+
+3. 
+	Does SW4 select a different root port?  
+		A. no
+	Why/why not?
+		A. SW4 doesn't select a different root port to the root bridge because a root port is the link 				between a switch and a bridge. this mean the cost doesnt effect the optimal path between 			a switch and the bridge
+
+4. 
+	  Does SW3 select a different root port?  
+	       A. Yes
+	  Why/why not?
+	       A. because the priority of the port changed and switch three needs a new route to reach the Root 			Bridge 
