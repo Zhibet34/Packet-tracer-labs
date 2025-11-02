@@ -1,0 +1,46 @@
+1.
+	- COMMEND'S
+		+ do sh spanning-tree
+		+ do sh spanning-tree int # detail
+		+ spanning-tree portfast
+		+ spanning-tree link-type point-to-point
+		+ spanning-tree link-type shared
+	
+	+ sw-1 is the root bridge
+		Role	|	State
+	  f0/24: D		 FWD
+	  f0/1:  D		 FWD
+	  f0/2:	 D		 FWD
+	  f0/3	 B		 BLK
+
+	
+	+ Theres a backup port (F0/3) because its on the same collision domain caused by the hub
+
+2.
+
+	+ sw-3 is the root bridge
+		Role      |    State
+	   f0/2:   R		FWD
+	   g0/1:   D		FWD
+	   f0/1:   D		FWD
+	   f0/24:  D		FWD
+
+	+ sw-2 
+		Role	|	State
+	  f0/1:  R		 FWD
+	  g0/1:  A		 BLK
+	  f0/2:  D		 FWD
+	  f0/23: D		 FWD
+	  f0/24: D		 FWD
+	
+	+ sw-4 
+		Role	|	State
+	  f0/2: A		 BLK
+	  f0/1: R		 FWD
+	  f0/24: D		 FWD
+
+3. The correct link for switch 1's f0/24 int is portface
+	
+	COMMEND'S:
+		- int #
+		- spanning-tree portfast 
