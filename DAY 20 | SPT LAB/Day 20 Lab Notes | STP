@@ -1,0 +1,48 @@
+
+COMMENDS:
+	- DO SH SPANNING-TREE
+
+
+Which switch is the root bridge?
+	A. switch 3
+
+Identify the role (root/designated/non-designated) of each switch port:
+SW1 F0/1: N-D   F0/2: N-D    F0/3: R   F0/4: N-D
+
+SW2 F0/1: D   F0/2:  D  F0/3: N-D   G0/1: R
+
+SW3 F0/1: D    F0/2: D    F0/3: D   G0/1: D
+
+SW4 G0/1: D   G0/2: R
+
+
+RULES TO FOLLOW:
+
+	* One switch is elected as the root bridge
+
+		- ROOT Bridge Selection :
+			+ Lowest Bridge ID
+			+ If the Bridge ID's are the same :
+				- The lowest mac address id become the root bridge
+	
+		- All port's on the root bridge are (D) designated ports
+			+ Forwarding state
+
+
+	* Each remaining switch will select one of it's interfaces to be it's ROOT Port (R)
+		+ ROOT Port's (Forwarding State)
+	
+		- Root Port Selection :
+			+ lowest root cost
+			+ lowest neighbor bridge id
+			+ lowest neighbor port id
+
+		- Ports accross the root port are always designated ports (D)
+			+ forwarding
+
+	* Each remaining collision domain will select one interface to be a designated port (D),fowarding state, and the       
+            other port in the collision domain will be non-designated (blocking state)
+
+		- Designated port Selection :
+			+ interface on witch with lowest root cost
+			+ interface on switch with lowest bridge id
