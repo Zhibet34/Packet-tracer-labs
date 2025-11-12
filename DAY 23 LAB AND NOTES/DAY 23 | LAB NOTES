@@ -1,0 +1,85 @@
+
+COMMEND'S :
+
+	+ sh etherchannel load-balance
+		+ Display the input's used in the interface selection calculation
+			* Input examples
+				- Source Mac
+				- Des Mac
+				- Source IP
+				- Destination IP
+				
+	+ port-channel load-balance method
+		+ This command is used to configure the method used in the interface calculation
+			* Method's
+				- dst-ip
+				- dst-mac
+				- src-dst-ip
+				- src-dst-mac
+				- src-ip 
+				- src-mac
+	
+	+ channel-group <number> mode <mode>
+		<number> : locally significant identifier for the etherchannel
+		<mode> : how the etherchannel will negotiate with devices on the other end of 				the link
+		mode types :
+			active -> Enable LACP unconditionally
+			auto -> Enable PAgP only if a PAgP device is detected
+		 	desirable -> Enable PAgP unconditionally
+			on -> Enable Etherchannel only
+			passive -> Enable LACP only if LACP device is detected
+		Example's :
+			PAgp : channel-group 1 mode desirable
+			LACP : channel-group 2 mode active
+			static : channel-group 3 mode on
+				static notes :
+					-> on only work with on mode
+
+	+ etherchannel summary
+		-> will display a list of flag's and the number of channel's used with its 			corresponding flag
+		Flags:
+			P - Bundled in port-channel
+			D - Down
+			U - In use 		
+			S - Layer2
+			N - Not in use
+			f - Failed to allocate aggregator
+			R - Layer3
+			s - Suspended
+			A - Formed by auto LAG
+
+ETHERCHANNEL CONFIGURATION METHOD'S :
+
+	* PAGP (Port Aggregation Protocol)
+		-> cisco proprietary protocol
+		-> Dynamically negotiates the creation/maintenance of the etherchannel
+		-> Similar to DTP
+	
+	* LACP (Link Aggregation Control Protocol)
+		-> Industry Standard Protocol (IEEE 802.3ad)
+		-> Dynamically negotiates the creation/maintenance of the etherchannel
+		-> Similar to DTP
+
+	* Static etherchannel
+		-> A protocol isnt used to determine if an etherchannel should be formed
+		-> staticaly configured to form an etherchannel
+			-> this method is never used <-
+
+		
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
