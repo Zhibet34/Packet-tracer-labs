@@ -1,0 +1,168 @@
+
+COMMENDS:
+		+ Ip route
+		+ IP ROUTE NETWORK SUBNET NEXT-HOP AD
+			* Administrative Distance
+
+Route Types :
+		- Network Route :
+			+ A route to a network/subnet
+				- Mask Length </32
+		- Host Route :
+			+ A route to a specific host 
+				- /32 Mask
+
+
+Dynamic Routing :  Routers use dynamic protocols to advertise information about the routes they know about other routers
+	
+	- If multiple routes to a destination are learned, the router determines which route is superior and adds it to 		the routing table	
+	
+		+ Metrics are used to determine which route is superior
+			-> lower metric = superior
+	
+	- Dynamic Routing Protocol Categories :
+		
+		IGP : Interior Gateway Protocol
+			-> used to share routes within a single autonomous system, single company
+				ex:
+					 R --> Router
+				       /   \                } --> Local | One company
+			  Router  <--  R    R --> Router
+			
+			 + Algorithm types :
+		
+				- Distance Vector : operate by sending the following to its connected 						neighbors 
+					---> Advertise its information to its neighbors <---					
+
+					+ the following are :
+						--> Knowned destination networks          \
+											   --->  Routing By Rumor 
+						--> Metric to reach thier known networks  /
+					--> Router only Learn 
+						- 'Distance' (metric) 
+						- 'Vector' (direction, the next-hop router) of each route
+													  <--
+					* older than Link State Protocol
+					* early examples :
+						--> RIPv1
+						--> IGRP : older version of EIGRP 					
+
+					Types :
+						--> RIP - Routing Information Protocol
+						--> EIGRP - Enhanced Interior Gateway Routing Protocol
+				
+				- Link State : every router creates a 'connectivity map' of the network
+
+					---> Map the network by gathering information from the routers <---
+					
+					- Each router advertise information about its interfaces to its neighbors, until 					  	all routers in the network develop the same map of the network
+						
+						+ Each Router independently uses this map to calculate the best routes to 							each destination
+						+ This Protocol use more resources (CPU) on the router, because more 
+							infromation is shared
+						+ Faster than Distance Vector Protocol
+					
+					Types :
+						--> OSPF - Open Shortest Path First
+						--> IS-IS - Intermediate System to Intermediate System
+		
+		EGP : Exterior Gateway Protocol
+			-> used to share routes between different Companies
+				ex: 
+					R --> Router                       R   --> Router
+				      /	  \              ----->          /   \
+			  Router <-- R     R --> Router     Router <--  R     R    --> Router
+			
+				    COMPANY # 1                         COMPANY # 2
+
+			   + Algorithm :
+				
+				 - Path Vector
+					--> BGP - Border Gateway Protocol
+
+      -	Dynamic Routing Protocol Metrics :
+		
+		* if a router using Dynamic Routing Protocol learns two different routes to the same destination :
+			
+			- It uses the metric value of the routes to determine which is best 
+				+ lower metric = better
+				     - each routing protocol uses a different metric to determine which route is the best
+
+			- If a router learns two or more routes via the same routing protocol to the same destination         		             with the same metric, both will be added to the routing table
+
+			- ECMP --> Equal Cost Multi-Path
+
+			IGP               Metric                           Explanation
+			
+			RIP               Hop count                        Each router in the path counts as one 'hop' 
+		
+			EIGRP             Metric based on bandwidth        Complex formula that can take into account 						  & delay (by default)		   many values. by default, the bandwidth of the 									   slowest link in the route and the total delay 									   of all links in the route used   
+
+			OSPF              Cost                             The cost of each link is calculated based on   									   bandwidth
+		
+			IS-IS             Cost                             The Total metric is the total cost of each
+                                                                           link in the route
+			
+			EX :
+	                          <-- <-- <--  <-- <--	 
+				R ++++++++++++++++++++ R ^         -- > = RIP
+			        + __     __     __     + |         __ = OSPF
+				+                      +
+				+		       + ^
+				+                      + | 
+				+                      + 
+				+ __      __     __    + ^
+				R ++++++++++++++++++++ R |
+
+			
+
+			
+    -->	         Route Protocol/Type                          AD
+		 
+		 Directly connected		              0
+			
+		 Static                                       1
+			
+		 External BGP                                 20
+		
+		 EIGRP                                        90
+		
+		 IGRP                                         100
+
+		 OSPF                                         110
+
+		 IS-IS                                        115
+		
+		 RIP                                          120
+		
+		 EIGRP                                        170
+
+		 Internal BGP (iBGP)                          200
+
+		 Unusable Route				      255
+
+
+  LAB Assignment Questions :
+	
+	1. Check the routing tables of R1 and R2.  
+   		 Which dynamic routing protocol is Enterprise A using?
+			A. OSPF
+   		 Which route will be used if PC1 tries to access SRV1?
+			A. 10.0.2.0/24 [110/2] via 10.0.0.2
+   		 Which route will be used if PC1 tries to access remote server 1.1.1.1 over the Internet?
+			A.0.0.0.0/0 via 203.0.113.9 | Static route
+   		 --->    Test by pinging SRV1 and 1.1.1.1  <---
+
+	2. Configure floating static routes on R1 and R2 that allow PC1 to reach SRV1 if the link between R1 and R2 		   fails.
+    		Do the routes enter the routing tables of R1 and R2?
+			A. Yes
+
+	3. Shut down the G0/2/0 interface of R1 or R2.
+       	       Do the floating static routes enter the routing tables of R1 and R2?
+			A. No
+    	    --->    Ping from PC1 to SRV1 to confirm    <---
+     
+
+
+
+
