@@ -1,0 +1,91 @@
+
+COMMAND'S :
+
+	- sh ip protocol
+	- default gateway command : ip route 0.0.0.0 0.0.0.0 203.0.113.2
+									\
+								         ---> Review
+									/
+	- default-information originate
+	
+	Loopback Interface :
+		- interface loopback <number>
+
+	RIP Command :
+		- router rip
+		- version <number>
+		- network <ip address >
+	
+	Passive int Command :
+		- passive-interface <int>
+
+Notes :
+	
+	- Passive interface command tell the router to stop sending rip advertisement out of 			that port
+
+	- Loopback interfaces are used for
+		+ Management, 
+		+ Routing protocols 
+		+ Testing
+	
+		--> the interface is always on <--
+
+	- RIP : Routing Information Protocol
+		
+		-> Distance Vector IGP
+			+ Routing by Rumor Logic to Learn/Share routes			
+
+		-> Uses hop count as a metric
+			+ One router is a hop
+			+ Maximum hop count is 15
+
+		-> Has three Versions :
+
+			RIPv1 
+				\
+				 ---> used for IPv4
+				/
+			RIPv2	
+
+			---> RIPv1 Breakdown :
+				
+				1. Only advertises classfull address (Class A, Class B, Class C)
+				
+				2. No subnetting 
+			
+				3. No subnet mask info in response message
+					ex:
+						10.1.1.0/24 --> 10.0.0.0
+
+			---> RIPv2 Breakdown :
+	
+				1. support everything RIPv1 doesnt	
+				
+				2. messages are multicast to 224.0.0.9
+				
+					- Multicast: messages are delivered only to devices that 
+						have joined that specific multicast group
+					
+				  	- Broadcast : message delivered to all devices on the 							local network	
+	
+
+			RIPng (RIP Next Generation), used for IPv6
+
+		-> RIP have 2 message types
+			
+			Request : ask for neighbors routing table
+
+			Response : give routing table to neighbor
+		
+				*** RIP routers share data every 30 second ***
+
+		--> Rip 'network' command is classfull, it will automatically convert to 				classfull networks
+
+			ex: 
+				10.0.55.2 will become 10.0.0.0 ( class A)
+
+		+ Network command tell router which interface active RIP on, not which network 				to advertise
+
+
+
+
