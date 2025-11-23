@@ -1,0 +1,112 @@
+
+COMMENDS :
+
+	- router ospf <1-65535> Process ID
+
+		# Proccess ID
+
+		   * locally significant
+
+		   * router with different ID's can become OSPF Neighbors
+	
+	- network <network address> <wildcard> area <#>
+	
+		   * network command requires you to specify the area	
+
+	- passive-interface <interface>
+
+	- Default route : ip route 0.0.0.0 0.0.0.0 203.0.113.2
+	
+	- advertise default route into OSPF : default-information originate
+	
+	- sh ip ospf neighbor
+	
+
+
+OSPF :
+	- Use's Dijkstra's algorithm  to find the shortest path to the destination router
+
+	- Three Versions 
+		* OSPFv1 (1989) ---> not in use anymore
+		* OSPFv2 (1998) ---> used for IPv4
+		* OSPFv3 (2008) ---> Used for IPv6 mainly, but also support IPv4
+
+	-  Routers store information about the network in LSA, then LSA are organized in a LSDB
+		
+		* LSA ---> Link State Advertisement
+
+		* LSDB ---> Link State Database
+	
+		---> Routers then floods LSA's until all routers in the OSPF area develop the 			     same map of the network
+
+	- LSA Flooding :
+		* Every LSA has an aging timer of 30 min by default, then the LSA will be 			  flooded again
+
+	- OSPF STEPS :
+	
+		1. Become neighbors
+			# connected to the same segment
+
+		2. Exchange LSA
+			# with neighbor routers
+
+		3. Calculate the best routes to each destination
+			# this information is inserted into the routing table
+
+	- Area's :
+
+		# OSPF uses areas to divide up the network
+
+			- Small networks can be in a single-area 
+
+				# no negative effect's on the network
+
+			- Single-area design have negative effects in large networks
+	
+				# SPF Algorithm takes more time to calculate routes
+				
+				# SPF Algorithm takes more time to calculate routes
+		
+				# SPF require more proccessing power on the routers
+				
+				# LSDB takes up more memory on the routers
+				 
+				# Any change in the network causes every router to react
+
+		# An area is a set of routers and links that share the same LSDB
+			
+		   - BACKBONE AREA (area 0) ---> is an area that all other areas must connect to
+
+		   - Internal Routers ---> routers with all int in the same area
+
+		   - Area Border Routers (ABRs) ---> routers with int in multiple area's
+
+			* ABR's maintain a separate LSDB for each area they are connected to
+
+				---> ABR's should only be connect to 2 areas maximum
+
+		   - Backbone Routers ---> routers connected to the backbone area (area 0)
+
+		   - Intra-Area Route ---> a route to a destination inside the same OSPF area
+
+		   - Interarea Route ---> a route to destination in a different OSPF area
+
+		   - All OSPF area's have atleast one ABR connected to the backbone area
+			
+		   - OSPF interfaces in the same subnet must be in the same area
+
+	- Autonomous System Boundary Router (ASBR) :
+	
+		  # OSPF router that connects the OSPF network to an external network
+
+			EX: use the default-information originate command to ASBR
+
+
+
+
+
+
+
+
+
+
