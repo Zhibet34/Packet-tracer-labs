@@ -1,0 +1,164 @@
+
+COMMAND :
+
+	# show ip ospf int <INT> 
+
+	# 3 ways to modify ospf cost 
+
+		- Change the reference bandwidth
+			
+			* auto-cost reference-bandwidth <# in megabits-per-second>
+
+		- Manual configuration 
+		
+			* ip ospf cost < cost >
+
+		- Change the interface bandwidth
+		
+			* bandwidth < kilobits-per-second >
+
+	# sh ip ospf interface brief
+
+	# activate OSPF directly on an interface
+	
+		- ip ospf <proccess-id> area <area-id>
+	
+		- passive-interface default
+
+	# OSPF Neighbor
+
+		- sh ip ospf neighbor
+
+	# Display the OSPF INT Brief Description
+
+		- sh ip ospf int brief
+
+
+OSPF Metric (Cost) :
+
+	# Automatically calculated based on the bandwidth (speed) of the interface
+		
+	        - Calculated by dividing a reference bandwidth value by the interface bandwidth
+		
+		     ---> Default Bandwidth is 100 mbps
+
+		       + Ex :
+			      * reference : 100 mbps / interface : 10 mbps --> cost of 10
+
+			      * reference : 100 mbs / interface : 100 mbps --> cost of 1
+	
+			      * reference : 100 mbps / interface : 1000 mbps --> cost of 1
+
+			      * reference : 100 mbps / interface : 10000 mbps --> cost of 1
+
+
+				---> All values less than 1 will be converted to 1
+	
+				     - FastEthernet        \
+				     - GigabitEthernet      ---> All equal | Default cost Of 1	
+				     - 10GigEthernet	   /	    
+							  	
+		  - Reference bandwidth should be greater than the fastest link in the network
+
+		  - Reference Bandwidth should be the same on all ospf routers on the network
+
+		  - OSPF cost is  the total of the outgoing/exit interfaces
+
+OSPF Neighbors :
+
+	# Router's who becomes neighbors, automatically share network information and calculates 	  routes 
+		
+	      - when an interface is OSPF enabled the router starts sending OSPF hello 			
+	
+	      messages out of the interface at regular interval (determined by the hello timer).
+		
+			* The messages then are used to introduce the router to potential OSPF 
+		
+			  neighbors
+			
+			* Default Hello Timer is 10 seconds on ethernet connection
+
+
+			* OSPF messages are encapsulated in an IP header, with a value of 89 in 			
+	
+			  the protocol field
+
+			* Hello messages are Multicast to 224.0.0.5 ( OSPF Multicast Address)
+
+
+	# Neighbor States
+
+		1. Down State 
+
+		    * The interface doesnt know about any OSPF neighbors yet
+
+		2. Init State
+
+		    * Hello packet received, but own router ID is not in the Hello Packet
+
+
+		3. 2-Way State
+	
+		    * R2 send a hello packet containing the Router-ID of both routers to R1
+
+			--> R1 will insert R2 into its OSPF neighbor table in the 2 way state
+		
+		    * R1 send another Hello message,  this time containing R2's Router ID
+		
+			--> Now both router are in the 2 way state
+
+		    * 2 way state means the router has receive a hello packet with its own Router ID in it
+
+		        --> Two way state means that all condition have been met for routers to become OSPF 
+
+			    Neighbors ( Router's are ready to share LSA's )
+
+			--> DR (Designated Router) And BDR (Backuo Designated Router) will be elected at this point
+
+		4. Exstart State
+
+		    * Router's will choose which router will start the exchange information about their LSDB   
+
+			- The Router with the  Higher ID become the MASTER and start the exchange
+
+			- The Router with the lowest ID become the SLAVE
+
+		5. Exchange 
+			
+			- Routers exchange DBD's which contain a list of the LSA's int their LSDB
+			
+				--> DBD : Database Descriptor Packet
+			
+		6. Loading State
+
+  		    * Router send Link State Request messages to request that their neighbors send them any LSA's 
+		
+		      they dont have 
+
+			- LSA are sent in Link State Update messages
+
+			- Routers send LSAck messgaes to acknowledge that they received the LSA's
+
+		7. Full State 
+
+		    * router have a full OSPF adjacency and identical LSDB's
+
+			- Router continue to send and listen for hello packet (every 10 seconds) to maintain 
+		
+			  neighbors adjacency
+
+			- Every hello packet is received , the 'Dead' timer ( 40 seconds by default ) is reset
+
+			- Dead timer reach 0 and no Hello message is received, the neighbor is removed
+
+			- Routers will continue to share LSA as the network changes to make sure each router has a
+
+			  a complete and accurate map of the network (LSDB)
+			
+
+
+
+
+
+
+
