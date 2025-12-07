@@ -1,0 +1,221 @@
+
+
+COMMAND'S :
+		* Ip address
+			+ standby # ip address
+
+		* Priority
+			+ standby # priority <# priority number>
+
+		* preempt 
+			+ standby # preempt ---> only necessary on the router you want to become active
+
+		* see configuration
+			+ do sh standby or sh standby
+			
+		* show pc arp table
+			+ arp -a		
+
+Notes :
+
+	# Active Router is selected based on these criteria 
+		
+		- Highest priority (default is 100)
+	
+		- highest Ip address
+
+	# HSRP v1 and v2 are compatible, if R1 uses v2, R2 must use v2 also
+	
+
+THINGS WELL COVER :
+
+	# The purpose of FHRPs ---> First Hop Redundancy Protocols
+	
+	# HSRP ( Hot Standby Router Protocol )
+
+	# VRRP ( Virtual Router Redundancy Protocol )
+
+	# GLBP ( Gateway Load Balancing Protocol )
+
+	# Basic HSRP configuration
+
+
+First HOP Redundancy Protocol :
+
+	Purpose :
+		   * A computer networking protocol that is designed to protect the default gateway used on a subnetwork by allowing two 
+		     or more routers to provide backup for that address. In the event of the active routers failing, the backup router 			     will take over the address, within seconds
+
+	# Client's will send ARP requests in order to discover the mac address of the current default gateway
+
+		Example :
+			   ARP REQUEST (Broadcast)
+				Hi 172.16.0.252 --> Destination ( server )
+				This is 172.16.0.1 --> Source ( client )
+				What's your Mac address ? --> Request
+
+			   ---> ALL Devices on the network receive this request <---
+
+			   ARP REPLY (Unicast) 
+				Hi 172.16.0.1 --> Destination ( client )
+				This is 172.16.0.252 --> Source ( server )
+				My Mac is : (Virtual Mac ). --> Response
+
+  			   ---> Only the client will receive the the response from the server <---
+
+	 # ROUTER STATES 
+			
+			* The Two Routers will send each other Hello messages to see if the Active router is still online
+	
+				- IF the standby router doesnt receive hello messages from the active router, the standby will become active 
+				  because it'll assume the active is down
+
+			* When the Router States changes , the new Active router will send out a Gratuitious ARP Message
+
+				- Gratuitous ARP : ARP replies send without being requested ( No ARP request message is required )
+					* The Frames are Broadcasted ( All devices on the network will receive it )
+	
+				   	Example :
+						   Hello! --> reply message
+						   I'm 172.16.0.252 --> New Active Routers IP Address
+						   My Mac is ( Virtual Mac ) --> Routers mac address
+			
+							--> every device will receive this message <--
+			
+			* This protocol is 'non-preemptive', this means that the active router will not automatically give up its role, even 			  if the former active router returns
+				
+			* You can Program the Routers to be Pre-emptive, but they default setting is non-preemptive
+
+
+			# StandBY : Backup Default Gateway Router 
+	
+			# Active : Current Gateway Router
+
+	 # First Hop Redundancy Protocols Summary 
+			
+			* Virtual IP is configured on two Routers
+
+			* Virtual MAC is generated for the Virtual IP (each FHRP uses a different format for the virtual MAC)
+		
+			* Active Router and a Standby Router are elected (different FHRP use different terms)
+
+			* End hosts in the network are configured to use virtual Ip as their default gateway
+
+			* Active router replies to ARP requests using the virtual MAC address, so traffic destined for other networks will be 
+			  sent to it
+
+			* If the active router fails, the standby become the next active router
+				- New active router will send gratuitous ARP messages so that switches will update their mac address table
+				- New active router now function as the default gateway
+
+			* If the old active router comes back online , by default it wont take back its role as the active router. It will 			  become the standby router
+
+			* You can configure 'preemption', so that the old active router does take back its old role
+				
+			
+HSRP (Hot Standby Router Protocol) : 
+
+	* Cisco Proprietary
+
+	* ROUTER STATES 
+		
+		* Active
+
+		* Standby
+
+	* There are TWO versions : version 1 and version 2
+		- version 2 adds IPv6 support and increases the number of groups that can be configured
+
+	* Multicast IPv4 address : v1 = 224.0.0.2
+				   v2 = 224.0.0.102
+
+	* Virtual Mac address: v1 = 0000.0c07.acXX (XX = HSRP group number) ---> 0000.0c07.ac01
+			       v2 = 0000.0c9f.fXXX (XXX = HSRP group number) ---> 0000.0c9f.f001
+
+	* In a situation with multiple subnets/ Vlans, you can configure a different active router in each subnet/vlan to laod balance
+
+VRRP (Virtual Router Redundancy Protocol) :
+
+	* Open standard
+
+	* ROUER STATES
+
+		* Master
+
+		* Backup
+	
+	* Multicast ipv4 address : 224.0.0.18
+
+	* Virtual Mac address : 0000.5e00.01XX (XX = VRRP group number) --> 0000.5e00.01c8 ---> c8 = 200
+
+	* In a situation with multiple subnets/vlans, you can configure a different master route in each subnet/vlan to load balance
+
+GLBP (Gateway Load Balancing Protocol) :
+
+	* Cisco proprietary
+
+	* Load balances among multiple routers with a single subnet
+
+	* AN AVG (Active Virtual Gateway) is elected
+
+	* Up to four AVFs (Active Virtual Fordwarders) are assigned by the AVG (AVG itself can be an AVF, too)
+	
+	* Each AVF acts as the default gateway for a portion of the host in the subnet
+
+	* Multicast IPv4 address : 224.0.0.102
+
+	* Virtual MAc address : 0007.b400.XXYY (XX = GLBP group number,  YY = AVF number) ---> 0007.b400.0101
+
+COMPARING FHRP :
+
+			FHRP		TERMINOLOGY		MULTICAST IP		VIRTUAL MAC		CISCO PROPRIETARY
+
+			HSRP		ACTIVE/STANDBY		V1: 224.0.0.2		V1: 0000.0C07.ACXX		YES
+								V2: 224.0.0.102		V2: 0000.0C9F.FXXX
+		
+			VRRP		MASTER/BACKUP		224.0.0.18		0000.5E00.01XX			 NO
+
+			GLBP		AVG/AVF			224.0.0.102		0007.B400.XXYY			YES
+
+	
+			
+			
+
+LAB QUESTIONS :
+
+
+	1. What is the default gateway configured as?
+		
+		# PC1 ---> 10.0.1.253
+
+		# PC2 ---> 10.0.1.252
+
+	2. What MAC address is mapped to the VIP?
+		
+		# PC1 --->  0000.0c07.ac01
+
+		# PC2 --->.  0000.0c07.ac01
+
+	3. Is R2 used as the default gateway?
+	
+		A. Yes because the other router interface route is down
+
+	4. Does it become the active router again?
+
+		A. Yes because of the preempt command configured
+				
+				
+
+						
+
+
+
+
+
+
+
+
+
+
+
+  		     
