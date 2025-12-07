@@ -44,7 +44,7 @@ First HOP Redundancy Protocol :
 
 	Purpose :
 		   * A computer networking protocol that is designed to protect the default gateway used on a subnetwork by allowing two 
-		     or more routers to provide backup for that address. In the event of the active routers failing, the backup router 			     will take over the address, within seconds
+		     or more routers to provide backup for that address. In the event of the active routers failing, the backup router will take over the address, within seconds
 
 	# Client's will send ARP requests in order to discover the mac address of the current default gateway
 
