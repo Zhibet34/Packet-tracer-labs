@@ -1,0 +1,229 @@
+
+
+OVERVIEW :
+
+	- Basic Of Layer 4
+
+	- TCP (Transmission Control Protocol)
+	
+	- UDP (User Datagram Protocol)
+
+	- Comparing TCP & UDP
+
+
+Basic Of Layer 4 :
+		
+	* Provides transparent transfer of data between end host 
+
+	* Provides or doesnt provide various services to applications :
+	
+		- Reloable data transfer
+		
+		- Error recovery
+
+		- Data sequencing
+
+		- Flow control 
+
+	* Provides Layer 4 addressing (port numbers)
+
+		- Identify the Application Layer Protocol
+		
+		- Provides session multiplexing  
+
+
+	* Port Numbers / Session Multiplexing 
+
+		# Port Number : not the physical interfaces/ports on the network devices instead its a numbered endpoints (0-65535) used to direct network traffic to specific application or 			  services on a device preventing data from getting mixed up
+
+			* TCP Example 
+				      SRC: 50000 DST: 80
+				      
+				      - SRC ---> Randomly selected by PC1, it helps identify the session				 
+				      - DST ---> Identifies the Application Layer Protocol
+
+			# 80 ---> HTTP
+			# 21 ---> FTP
+			# 53 ---> DNS
+			# 443 --> HTTPS
+			
+			* Port Ranges designated by IANA (Internet Assigned Numbers Authority)
+				- Well Known Port Numbers : 0 - 1023
+				- Registered Port Numbers : 1024 - 49151
+				- Ephemeral/Private/Dynamic Port Numbers : 49152 -65535
+				      
+
+		# Session Multiplexing : a technique that allows multiple logical communication sessions to be carried over a single physical network connection
+		
+			* SESSION : an exchange of data between two or more communication devices
+
+TCP (Transmission Control Protocol) :
+
+	* Connection-oriented 
+
+		- before sending data to a destination host , the two host communicate to establish a connection. Once the connection is established the data exchange begins
+
+	* Provides reliable communication
+
+		- Destination host must acknowledge that it received each TCP segment
+		- If a segment isnt acknowledge, it is sent again
+
+	* Provides sequencing 
+
+		- Allows destination hosts to put segments in the correct order even if they arrive out of order
+
+	* Provides Flow Control 
+
+		- Destination host tells the source host to increase / decrease the rate that data is sent
+
+	* TCP Header
+
+		- Source Port --> 16 bits = 65536 available port numbers
+		- Destination Port --> Application port number
+		- Sequence Number 		      \
+				   		       ----> Provide 	
+		- Acknowledgement Number (if Ack set) /
+		- ACK
+		- SYN           \
+		- FIN		 ---> used for flow control
+		- WINDOW SIZE   /
+
+	* Establishing connection : Three-way Handshake
+		
+		SYN flag
+		------------------------------->
+			       SYN flag,ACK flag		
+		<-------------------------------
+		ACK flag
+		------------------------------->
+
+	* Terminating Connections : Four-Way Handshake
+		 
+	          FIN flag
+		------------------------------->
+				       ACK flag
+		<-------------------------------
+				       FIN flag
+		<-------------------------------
+		   ACK flag	
+		------------------------------->
+
+	* Sequencing / Acknowledgment 
+
+		    seq: 10    * 3 way handshake SYN *
+		--------------------------------------------------->
+		    * 3 way handshake SYN-ACK *    seq: 50, Ack 11
+		<---------------------------------------------------
+		    seq: 11, Ack 51     * 3 way handshake Ack *
+		--------------------------------------------------->
+		                                    seq: 51, Ack 12
+		<---------------------------------------------------
+		     seq: 12, Ack 52
+		--------------------------------------------------->
+						     seq: 52, Ack 13
+		<---------------------------------------------------
+			
+			# Sequence number is randomly set by host 
+			# Forward acknowledgment is used to indicate the sequence number of the next segment the host expects to receive
+
+
+	 * Retransmission
+
+	   	seq: 20
+		--------------------------------------->
+						  Ack 21
+		<---------------------------------------
+		seq: 21
+		------------------XXXXXX ---> Failed Segment
+		seq: 21
+		--------------------------------------->
+						  Ack 22
+		<---------------------------------------
+
+UDP (User Datagram Protocol) :
+
+	* Not connection-oriented
+	
+		- No connection established with the host before sending data, the data is simply sent
+
+	* Does not provide reliable communication
+
+		- if a segment is lost, UDP has no mechanosm to re-transmit it. Segments are sent 'best-effort'
+	
+	* Does not provide sequencing
+
+		- no sequence number field in the UDP header. if segment fails , UDP doesnt put sent a replacement
+
+	* Doesnt provide flow control
+
+		- No window size in UDP header
+
+	* UDP header 
+
+		- Source Port
+		- Destination Port
+		- Length 
+		- Checksum
+
+Comparing TCp & UDP
+
+		# TCP					# UDP
+		
+		  - Connection-oriented		  	  - Connectioneless
+		 
+		  - Realiable			 	  - Unreliable
+
+		  - Sequencing			  	  - No Sequencing
+
+		  - Flow Control		 	  - No Flow Control
+
+		  - Use for download, file sharing 	  - Used for VoIP, live video 
+
+	* Port Numbers
+
+		# TCP			# UPD			   # TCP & UDP
+
+		  - FTP data (20)	  - DHCP server (67)	     - DNS (53)
+	
+		  - FTP control (21)	  - DHCP client (68)
+
+		  - SSH (22)		  - TFTP (69)
+		
+		  - Telnet (23)		  - SNMP agent (161)
+
+		  - SMTP (25)		  - SNMP manager (162)
+
+		  - HTTP (80)		  - Syslog (514)
+
+		  - POP3 (110)
+
+		  - HTTPS (443)
+
+
+**** REVIEW ANKI FLASH CARDS *****
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
