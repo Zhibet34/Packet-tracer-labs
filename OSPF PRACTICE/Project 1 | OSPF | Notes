@@ -1,0 +1,73 @@
+
+
+COMANDS :
+
+	Static route : 
+
+		ip route <des network> <subnet> <next hop>
+	
+	OSPF Configuration : 
+
+		Router OSPF # 
+		
+		network : <network > <wildcard mask> area 0	
+
+		do sh ip protocol
+		
+		do sh ip ospf int <INT> | do sh ip ospf
+		
+		auto-cost < Reference Number >
+	
+		do sh ip ospf database
+
+
+OSPF :      
+	network : 10.0.0.0/24
+
+	subnets :
+
+		- 10.0.0.0/26  
+		 	     
+			     Range : 1 - 62
+			     
+			     Broadcast : 10.0.0.63	     	
+
+		- 10.0.0.64/26 
+
+			     Range : 65 - 126 
+
+			     Broadcast : 10.0.0.127
+
+		- 10.0.0.128/26 
+
+			     Range : 129 - 190
+				
+			     Broadcast : 10.0.0.191 
+
+		- 10.0.0.192/26 
+
+			     Range : 193 - 254
+
+			     Broadcast : 10.0.0.255
+
+
+
+
+
+First Hop Redundancy Protocol (FHRP) :
+
+	ISP Network : 192.58.96.0/24
+
+		Ip Address 1 : 192.58.96.1 / 24
+		Ip Address 2 : 192.58.96.2 / 24
+		VIP Address : 192.58.96.254 / 24
+
+
+
+
+
+
+
+
+
+
