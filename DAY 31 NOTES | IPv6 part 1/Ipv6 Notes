@@ -1,0 +1,325 @@
+
+Command :
+ 
+	- Allows the router to perform IPv6 routing
+		# ipv6 Unicast-routing
+
+	- Configure IPv6 Address on an interface
+		# ipv6 address 2001:db8:0:0::1/64
+
+	- Display interfaces that have IPv6 configured
+		# show ipv6 interface brief
+
+Things Covered :
+
+		- Hexadecimal (review)
+
+		- Why IPv6
+
+		- Basic Of Ipv6
+		
+		- Configuring Ipv6 addresses
+
+		* especial mention 
+		
+			# Ipv5 known as Internet Stream protocol
+
+				- Develop in the late 1970
+				
+				- Never introduce to the public
+			
+				- Internet Stream Protocol was never called ipv5 But it had
+				  a value of 5 in the version field of the  ip header
+
+				- As a result of the Internet Stream Protocol, the successor of 
+				  Ipv4 became known as Ipv6
+
+
+Hexadecimal Review :
+
+			* Binary / Base 2 / Ob
+				- ex :
+					0 , 1
+
+			*  Decimal / Base 10 / Od
+				- ex :
+					0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+
+			* Hexadecimal / Base 16 / Ox
+				- ex :
+
+					0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F
+
+				- Decimal 	Binary		Hexadecimal
+
+				      0 	 0000		     0		
+		
+				      1		 0001		     1
+				
+				      2		 0010		     2
+				
+				      3		 0011  		     3
+
+				      4		 0100		     4
+
+				      5		 0101		     5
+
+				      6		 0110		     6
+
+				      7		 0111		     7
+					
+				      8		 1000		     8
+
+				      9		 1001		     9
+
+				      10	 1010		     A
+		
+				      11	 1011		     B
+
+				      12	 1100		     C
+
+				      13	 1101		     D
+		
+				      14	 1110		     E
+
+				      15	 1111		     F
+
+			* Binary To Hexadecimal Convergence Steps
+
+				1. Split the number into 4-bit group
+				
+				2. Convert each 4-bit group to decimal
+				
+				3. Convert each decimal number to hexadecimal
+			
+				4. Thats the answer	
+				      
+				Ex : 
+					Ob00101111 = Ox??
+					     /\
+					    /  \	
+					   /    \
+					 0010  1111 ---> Step 1 ( Split )
+					   |	 |
+					   |     |
+					   |	 |
+					  Od2   Od15 ---> Step 2 ( Convert To Decimal )
+					   |     |
+					   |	 |
+					   |     |
+					  Ox2	OxF ---> step 3   ( Convert To Hexadecimal )
+					    \	/
+					     \ /
+					      |	
+					     Ox2F ---> step 4 ( Combine the two to get the answer )
+	
+			 * Hexadecimal To Binary Convergence Steps
+
+				1. Split up the hexadecimal digit
+			
+				2. Convert each hexadecimal digit to decimal 
+
+				3. Convert each decimal number to binary
+			
+				4. That's the answer
+		
+				Ex :
+
+					OxFB
+					  /\	
+					 /  \
+					/    \
+				       OxF   OxB
+				       /      \
+				      /	       \
+				     /	        \
+				   Od15		Od11
+				    /		  \
+				   /		   \
+				  /		    \
+				 Ob1111		   Ob1011
+				     \		    /
+				      \		   /
+				       \	  /
+					Oxb11111011
+
+
+Why Ipv6 :
+
+		- There arent enough IPv4 address available
+		
+		- The internet have outgrowned the capability of Ipv4
+		
+			* VLSM, private IPv4 addresses and NAT have been used to conserve the use of IPv4 				  address space
+			
+			* Short term solutions
+
+		- IANA announce Some regions of the world have ran out of Ipv4 addresses
+
+			* On 9/24/2015 ARIN declared exhaustion of the Ipv4 address pool
+
+IPv6 :
+
+		- An Ipv6 address is 128 bits
+		
+		- Every additional bit doubles the number of possible addresses
+	
+		- Number of Addresses 
+		
+			* IPv6 : 340,282,366,920,938,463,463,374,607,431,768,211,456
+		
+				ex: 2001:0DB8:5917:EABD:6562:17EA:C92D:59BD / 64
+			
+			* IPv4 : 4,294,967,296 
+
+				ex: 192.168.155.0 / 24
+		
+		- Shortening IPv6 addresses
+
+			* Leading 0s can be removed
+		
+				ex : 
+					2001:0DB8:000A:001B:20A1:0020:0080:34BD
+							|
+							|
+					2001:DB8:A:1B:20A1:80:34BD
+
+			* Consecutive quartets of all 0s can be replace with a double colon (::)
+			
+				ex :
+
+					2001:0DB8:0000:0000:0000:0000:0080:34BD
+						|
+						|	
+					2001:DB8::80:34BD
+			
+			* Consexutive quartets of 0s can only be abbreviated once in an IPv6
+
+				ex :
+
+					2001:0000:0000:0000:20A1:0000:0000:34BD
+					
+					2001::20A1::34BD XXXXX ---> 1. This will not work 
+	
+					2001::20A1:0:0:34BD ---> 2. this work
+
+					*** 2 works because only one side of the Ip address is abbreviated by ::
+
+				example :
+
+				FULL IPv6 Address			      	     Shortened IPv6 Address
+			
+			2000:0078:0020:01BF:ED89:0000:0000:0001			2000:78:20:1BF:ED89::1
+
+			34EF:230D:0000:0000:00AF:9400:AC85:0009			34EF:230D::AF:9400:AC85:9
+			
+			0045:0000:0000:0000:0000:54A8:002D:F8B9			45::54A8:2D:F8B9
+		
+		- Expanding IPv6 addresses
+
+			* Expanding 0 where needed (All quartets should have 4 hexadecimal characters)
+		
+				ex :
+
+					FE80::2:0:0:FBE8
+		
+					FE80::0002:0000:0000:FBE8
+
+
+				- If a double colon is used, replace it with all-0 quartets. Make sure there are
+				  8 quartets in total
+			
+				    * FE80::0002:0000:0000:FBE8 -> 5 quartets ( 8 quartets, but only 5 are written )
+
+				    * FE80:0000:0000:0000:0002:0000:0000:FBE8 
+
+
+				     # Expanding shortened Ipv6 addresses Example
+
+					shortened Ipv6			Full IPv6
+
+					FE80::1010:2FC:0:9		FE80:0000:0000:000:1010:02FC:0000:0009
+
+					::D8:45:7:F89:4B7		0000:0000:0000:00D8:0045:0007:0F89:04B7
+		
+					DE02:402:BC78:0:78::		DE02:0402:BC78:0000:0078:0000:0000:0000
+					
+					::1				0000:0000:0000:0000:0000:0000:0000:0001
+
+		
+		- Finding the IPv6 prefix ( global unicast addresses )
+		
+			* Companies requesting IPv6 addresses from their ISP will receive a /48 block
+
+			* Normaly IPv6 subnets use a /64 prefix length
+
+			* As a result companies have 16 bits to use in order to make subnets
+
+			* The remaining 64 bits can be used for host
+
+				# 48 bits ---> Network Portion
+
+				# 16 bits ---> Subnet Identifier
+
+				# 64 bits ---> Host Portion
+
+				---> Together they make up the complete IPv6 address ( which is 128 bits ) <---
+
+				Ex :
+
+					2001:0DB8:8B00:0001::1 / 64
+
+					2001:0DB8:8B00:0001 ---> 48 bit 'global routing prefix' assigned by the ISP
+
+					0001 ----> 16 bits 'subnet identifier', used by the enterprise to make various subnets
+
+					0000:0000:0000:0001 ---> 64 bit 'interface identifier', the host portion of the address
+
+			* Prefix means Network portion
+
+				# / 64 means the first octates are the network portion because 16+16+16+16 = 64
+
+				# / 56 means the first octate are the network portion but the prefix end in the middle of the 
+				  octate
+					
+					# select the first half of the octate then fill the rest with zeros
+
+					Ex :
+
+						300D:00F2:0B34:2100:0000:0000:1200:0001/56
+
+						300D:F2:B34:2100::/56 ---> Network Portion , everything else will be zeros
+
+				# / 93 mean the first octate are the networking portion
+
+					* First 5 hextact are equal to 80 bits
+
+					* So we split the 6 octate until we reach the correct ammount we need
+	
+					* then we convert the rest to binary in order to get the value thats located at that 										  place
+
+					ex :
+
+						2001:0DB8:8B00:0001:FB89:017B:0020:0011/93
+
+						2001:0DB8:8B00:0001:FB89 ---> First 5 hextate (80 bit)
+					
+						017B ---> this whole hextact will make it 96 bits in total but we only need 93 so 											  we split it
+
+							ex :
+							       0 1 7 B --> this will need to be converted to binary in order to get the value
+							       ^ ^ ^ 																			       | | | 
+
+							       4+4+4 = 12 + 80 --> 92 
+
+							       OxB = 11 
+								
+							       11 = 1011 in binary , we take one from this to complete the amount of bits we need ( 92 + 1=93)
+
+							       1101
+							       ||||		
+							       8401 -> we only take the 8
+					
+						As a result the prefix is 2001:DB8:8B00:1:FB89:178::/93
+
+				
