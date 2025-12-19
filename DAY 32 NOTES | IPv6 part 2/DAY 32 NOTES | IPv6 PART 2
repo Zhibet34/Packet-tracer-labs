@@ -1,0 +1,362 @@
+
+COMMAND :
+		# EUI-64 Configuration
+		
+			- ipv6 address < IPV6 ADDRESS / 64 > eui-64
+
+		# Display Int detail 
+
+			- sh int #
+	
+		# Link Local Address 
+
+			- ipv6 enable
+	
+			- sh ipv6 int brief
+
+		# Anycast config
+	
+			- ipv6 address < V6 address /128 > anycast
+
+		# Linked Local Address
+
+			- do sh IPv6 int g0/1
+
+
+
+THINGS COVERT :
+
+		* IPv6 address configuration (continued)
+			-> Modified EUI-64
+
+		* Ipv6 address types
+
+			-> Global Unicast
+
+			-> Unique Local
+
+			-> Link Local
+
+			-> Multicast
+
+			-> Others
+
+Ipv6 Configuration addresses (EUI-64) :
+
+		* EUI ---> Extended Unique Identifier
+
+		* (Modified) EUI-64 is a method of converting a MAC address (48 bits) into a 64-bit interface identifier
+
+		* This interface identifier can then become the 'Host Portion' of a /64 IPv6 address
+
+		* How to convert the MAC address :
+
+			1. Divide the MAC address in Half
+		
+				ex: 152A 4586 90BE -----> 152A 45 | 86 90BE
+
+			2. Insert <FFFE> in the middle
+
+				ex: 152A 45FF FE86 90BE
+
+			3. Invert the 7th bit (0 become 1 | 1 become 0)
+				
+				ex : 152A 45FF FE86 90BE
+				     ||
+			  4 Bits <--- ---> 8 Bits ( the seventh bits leave in here
+				      |
+			   	      |	  
+				      Convert it to Binary to get the seventh bit 5.
+
+				      5 in binary is 0101
+						     567 ----> 0 is the seventh bit ( invert it to 1 ), as result 0101 become 0111 (0111 = 7)
+	
+				152A 45FF FE86 90BE becomes 172A 45FF FE86 90BE after the convergent
+
+		* MAC ADDRESS CONVERGENCE :
+
+					MAC ADDRESS 				EUI-64 INnterface Identifier
+
+					7815 ADEB 5687				7A15 ADFF FEEB 5687		
+						 
+					7053 4589 A876				7253 45FF FE89 A876
+
+					1989 8752 8952      		    	1B89 87FF FE52 8952
+			
+				ex # 1 : 
+
+				 	7815 ADEB 5687
+					  7815 ADFF FEEB 5687
+					   |
+					 1000
+					 1010 ---> 10 -> A
+					7A15 ADFF FEEB 5687
+
+				ex # 2 :
+
+					7053 4589 A876
+					7053 45FF FE89 A876
+					 |
+				       0000
+				       0020 ---> 2
+					7253 45FF FE89 A876
+
+				ex # 3 :
+
+					1989 8752 8952
+					1989 87FF FE52 8952
+					 |
+				       1001
+				       1011 ---> 11 ---> B
+					1B89 87FF FE52 8952
+				
+			# notes 
+				A -> 10 -> 1010
+				
+				B -> 11 -> 1011
+
+				C -> 12 -> 1100
+
+				D -> 13 -> 1101
+					     
+ 				E -> 14 -> 1110 
+
+				F -> 15 -> 1111
+		
+		* why invert the 7th bit
+		
+			- Mac address can be divided into two types
+
+				# UAA (Universally Administered Address)
+					-> Uniquely assigned to the device by the manufacturer
+
+				#  LAA (Locally Administered Address)
+					-> Manually assigned by an admin (with the mac-address command on the interface) or protocol. 
+					   Not Globaly unique
+
+				# You can identify a UAA or LAA by the 7th bit of the mac address, called the U/L bit
+					
+					* U = Universal	| * L = Local
+
+					-> U/L bit set to 0 = UAA
+					-> U/L bit set to 1 = LAA
+
+				# In the context of IPv6 address / EUI-64, the meaning of the U/L bit is reserved
+
+					-> U/L bit set to 0 = Mac Address EUI-64 interface ID was made from an LAA
+
+					-> U/L bit set to 1 = Mac Address EUI-64 interface ID was made from an UAA
+
+IPv6 address Types :
+
+		* Global Unicast Addresses
+
+			-> Public Addresses which can be used over the internet
+
+			-> They must be globally unique
+
+				# Must be registered to the IANA
+			
+			-> originally defined as rhe 2000::/3 block (2000:: to 3FFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF)
+			
+			-> Now defined as all addresses which arent reserved for other purposes
+
+				ex :
+					2001:0DB8:8B00|:0001:0000:0000:0000:0001 / 64
+						      |	  |		|	
+		    48 bit 'global routing prefix'<---|   |  		|
+				      			  |		|
+			  16 bit 'subnet identifier'<-----|	 	|
+									|-----> 64 bit 'interface identifier'
+
+		* Unique Local Addresses 
+
+			-> Cannot be used over the internet
+
+			-> Unique Local
+				
+				-> No need to register them
+
+			-> Uses the address block FC00::/7 (FC00:: to FDFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF)
+
+			-> Later update require the 8th bit to be set to 1, so the first two digits must be FD
+
+			-> Gloabl ID should be unique in order to prevent addresses from overlapping when companies merge
+
+				ex :
+
+					FD45:93AC:8A8F:0001:0000:0000:0000:0001/64
+				
+					# FD ---> Indicates a unique Local address
+
+					# 45:93AC:8A8F ---> 40 bit 'global ID', which should be randomly generated
+
+					# 0001 ---> 16 bit 'subnet identifier', used by the enterprise to make various subnets
+	
+					# 0000:0000:0000:0001 ---> 64 bit 'interface identifier', the host portion of the address
+
+		* Link Local addresses 
+
+			-> automatically generated on IPv6-enabled interfaces
+
+			-> uses the address block FE80::/10 (FE80:: to FEBF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF)
+
+			-> Address won't ever start with :
+			
+				- FE9
+
+				- FEA
+
+				- FEB
+
+				* it will only start with FE8 *
+
+			-> The interface ID is generated using the EUI-64 rules
+
+		* Multicast Addresses
+
+			-> Unicast (One to One)
+
+				* One source to One destination
+
+			-> Broadcast (One to All)
+
+				* One source to all destinations (within the subnet)
+
+			-> Multicast (One To Many)
+
+				* One source to multiple destinations (that have joined the specific multicast group)
+
+				* IPv6 uses range FF00::/8 for multicast (FF00:: to FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF)
+
+			-> IPv6 doesnt use broadcast ( no Broadcast Address in IPv6)
+
+			# Examples :
+					Purpose 		IPv6 Address		IPv4 Address
+
+				All nodes/host(Broadcast	   FF02::1		 224.0.0.1
+
+					All Routers		   FF02::2		 224.0.0.2
+
+					OSPF Routers		   FF02::5		 224.0.0.5
+			
+				      OSPF DRs/BDRs		   FF02::6		 224.0.0.6
+
+				      All RIP Routers		   FF02::9		 224.0.0.9
+
+			 	    All EIGRP Routers		   FF02::A		 224.0.0.10
+
+			-> IPv6 defines multiple multicast 'scopes' 
+
+				* Scopes indicate how far the packet should be forwarded
+
+			-> IPv6 multicast scopes :
+
+				* Inteface Local (FF01) 
+
+					-> Packet doesn't leave the local device
+
+					-> Used to send traffic to a service within the local device
+
+				* LINK Local (FF02)
+
+					-> Packet remains in the local subnet
+
+					-> Routers will not route the packet between subnets
+
+				* Site Local (FF05)
+
+					-> Packets can be forwarded by routers
+
+					-> should be limited to a single physical location (not forwarded over wan)
+
+				* Organizaation Local (FF08)
+
+					-> Wider in scope than site-local (an entire company/organization)
+
+				* Global (FF0E)
+
+					-> No boundaries.
+
+					-> Can be routed over the internet
+			
+		* Anycast 
+
+			-> new feature of IPv6
+
+			-> One To One | One To Many
+
+			-> Multiple router are configured with the same Ipv6 address
+
+				-> Use routing protocol to advertise the address
+				
+				-> host send packets to that destination address, routers will forward it to the nearest router configured with 				   that ip address (based on routing metric)
+
+				-> No specific address range for anycast addresses
+
+		* Other IPv6 Addresses 
+
+			-> :: = The unspecified Ipv6 address
+
+				- can be used when a device doesnt yet know its IPv6 address
+
+				- IPv6 default route are configured to ::/0
+			
+				- Ipv4 equivalent 0.0.0.0
+
+			-> :: 1 = The Loopback address
+
+				- Used to test the protocol stack on the local device
+			
+				- Messages sent to this address are proccessed within the local device, but not sent to other devices
+
+				- IPv4 equivalent 127.0.0.0/8 address range
+
+				
+					 
+Lab :
+
+	- Link local address is the Defaul Gateway Address
+
+	1.
+
+		PC.1 mac-address :  0030.f236.4502 --->  0030 f2ff fe36 4502 --> 0230 f2ff fe36 4502
+
+		PC.2 mac-address :  0001.63b0.b802 --->	 0001 63ff feb0 b802 --> 0201 63ff feb0 b802
+							  |
+							 0000
+							 567
+							   1
+							 0010 --> 0201
+
+	2. 
+
+		Router 1 Default Gateway : FE80::230:F2FF:FE36:4502 ---> Link Local Address
+
+		Router 2 Default Gateway : FE80::201:63FF:FEB0:B802 ---> Link Local Address
+
+		command : sh ipv6 int <#> brief
+
+
+	3. 
+		# Int <#>
+
+		# IPv6 enable
+
+
+	4.
+		# IPv6 unicast-routing
+
+		# IPv6 route < Destination Network > <Int ID> < Next Hop >
+							|	       |  
+						      g0/0      Link Local Address
+							
+
+
+
+
+
+
+
+
+
