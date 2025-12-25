@@ -1,0 +1,312 @@
+
+COMMAND :
+		# Display neighbors
+
+			- show ipv6 neighbor
+
+		# SLAAC 
+
+			- IPv6 address ipv6 address prefix/prefix-length eui-64 
+			- ipv6 address autoconfig
+
+
+Things Covered : 
+
+		# Correction
+
+		# IPv6 header
+
+		# Neighbor Discovery Protocol (NDP)
+
+		# SLAAC
+
+		#Ipv6 Static routing
+
+Correction :
+
+		* IPv6 address representation 
+
+			- RFC (Request For Comments ) : Official documents of the internet specifications, protocol and 
+			  procedures
+
+				ex :
+
+					RFC 5952 --> A recommendation for IPv6 address Text Representation
+
+					# Before RFC , IPv6 address representation was more flexible
+
+						-> You could remove leading 0s, or leave them
+
+						-> You could replace all-0 quartets with ::, or leave them
+
+						-> You could use uppercase-case 0xA,B,C,D,E,F or lowercase 0X,a,b,c,d,e,f
+
+					# After RFC, IPv6 address representation have become standardized
+
+						-> Leading 0's must be removed 
+							
+							2001: 0db8: 0000: 0001: 0f2a: 4fff: fea3: 00b1
+							2001:  db8:    0:    1:  f2a: 4fff: fea3:   b1
+						
+						-> :: Must be used to shorten the longest string of all-0 quartets
+							*** If there is only one all-0 quartet, dont use '::') ***
+
+							2001: 0000: 0000: 0000: 0f2a: 0000: 0000: 00b1
+							2001		::	 f2a:    0:    0:   b1
+
+							- :: = 3 quartets of 0
+
+						-> if there are two equal-length choices for the ::, use :: to shorten the one on the left
+
+							2001: 0db8: 0000: 0000: 0f2a: 0000: 0000: 00b1 
+								       \ /
+							2001:  db8:    : :       f2a:    0:    0:   b1
+									|
+								Left most quartets of 0's
+
+						-> Hexadecimal characters 'a', 'b', 'c', 'd', 'e' and 'f' ,ust be written using lowercase, not 							   uppercase A B C D E F
+				
+							2001: 0DB4: 67A4: 000A: 0000: 0000: DF7A: 0034  X -> Capital Hex
+
+							2001:  bd4: 67a4:    a:    ::       df7a:   34  √ -> Lowercase Hex  
+
+IPv6 Header :
+
+
+		* Version
+
+			- Length is 4 bits
+
+			- Indicates the version of IP that is used 
+	
+			- Fixed value of 6 (0b0110) to indicate ipv6
+					     |	
+					   Binary
+
+		* Traffic Class
+
+			- Lenght is 8 bits
+
+			- Used for QoS (Quality of Service), to indicate high-priority traffic
+
+			- For example IP phone traffic, live video calls, etc will have a traffic class value which give them priority over traffic
+		
+		* Flow Label
+
+			- Length is 20 bits
+			
+			- Used to identify specific traffic 'flows' (communincations between a specific source and destination)
+
+		* Payload Length
+
+			- Length is 16 bits
+
+			- Indicates the length of the payload ( the encapsulated layer 4 segment ) in Bytes
+
+			- The length of the IPv6 header itself isnt included, because its always 40
+
+		* Next Header
+
+			- length is 8 bits
+
+			- indicates the type of the 'next header' (header of the encapsulated segment), for example TCP or UDP
+
+		* Hop Limit
+
+			- length is 8 bits
+
+			- The value in thus field is decremented by 1 by each router that forward it. if it reaches 0 the packet is discarded
+
+			- same function as the Ipv4 header's 'TTL' field
+
+		* Source / Destination
+
+			- Length 
+
+				# Source : 128 bits
+
+				# Destination : 128 bits
+
+			- These fields contain the IPv6 addresses of the packets source and the packets intended destination
+
+Neighbor Discovery Protocol (NDP)
+
+		* Solicited-Node Multicast Address 
+
+			<--- RESEARCH HOW the solicited node multicast Address is formed --->
+
+			- An IPv6 solicited-node multicast address is calculated from a unincast address
+
+				# allows the ethernet NIC to filter the frame by examining the destination MAC address without sending it to the IPv6
+				process to see if the device is the untended target of the IPv6 packet
+
+			- Uses the last 6 digits of a unicast address
+
+				ex:
+
+					Solicited-node Formula: ff02::1:ff + last 6 hex digits of the unicast address
+
+					Unicast Address: 2001:odb8:0:1:489:4eda:7|3a:12b8	 
+										 -------> last six digits of the unicast address
+					
+					Solicited-node Multicast address : ff02::1:ff|a3:b1
+										     -------> Unicast bits	
+		* Protocol in IPv6 
+
+		* Main function of NDP is to replace the functions of ARP
+
+		* The ARP-like function of NDP uses ICMPv6 and solicited-node multicast addresses to learn the MAC address of other hosts.
+
+			*(ARP in IPv4 uses Broadcast messages)
+
+		* Two message types are used
+
+			1. Neighbor Solicitation (NS) = ICMPv6 Type 135
+
+			2. Neighbor Advertisement (NA) = ICMPv6 Type 136
+
+				- ex :
+
+					Neighbor Solicitation (NS) :
+
+
+							   |  2001:db8::12:3456		      2001:db8::78:9abc	  |
+						Router 1 --|--					 		--|-- Router 2
+							   | G0/0	 		     	     	     G0/0 | 
+
+						     Hi, what's your MAC Address  ---------------------------->
+
+								# Source IP: R1 G0/0 IP
+
+								# Destination IP: R2 solicited-node multicast address
+
+								# Source MAC: R1 G0/0 MAC
+		
+								# Destination MAC: Multicast MAC Based on R2 solicited-node address
+
+					 Neighbor Advertisement (NA) :
+
+							
+							   |  2001:db8::12:3456		        2001:db8::78:9abc |
+						Router 1 --|--					 		--|-- Router 2
+							   |  G0/0					    G0/0  |
+													
+								 <----------------------------------------  Hi, my MAC address is ca02.097c.0008
+
+													   # Source IP : R2 G0/0 IP
+
+													   # Destination IP : R1 G0/0 IP
+
+													   # Source MAC : R2 G0/0 MAC
+
+													   # Destination MAC : R1 G0/0 MAC
+
+		 * allows routers to discovery each automaticaly when connected to the same network 
+
+		 * Two messages are used in this proccess :
+
+			1. Router solicitation (RS)
+
+			2. Router Advertisement (RA)
+
+				ex :
+
+							RS					  			RA
+					-> Sent to multicast address FF02::2				-> Send to multicast address FF02::1
+
+					-> Ask all router on the link to identify themselves		-> Routers announces its presence, as well as
+													   other information about the link
+
+					-> Asks all routers on the local link to identify themselves	-> These messages are send in response to RS
+													   messages
+
+					-> sent when an interface is enabled/host is connected to 	-> send periodically
+					   the network	
+
+							     <---------------------------------------------------
+												RS: Any routers here?
+					
+							   |  2001:db8::1/64			  2001:db8::2/64  | 
+						Router 1 --|--					 		--|-- Router 2
+							   |  G0/0					    G0/0  |						
+								    RA: I'm a router!	
+							      -------------------------------------------------->
+
+
+Stateless Address Auto-configuration (SLAAC) :
+
+		* Hosts uses RS/RA messages to learn the IPv6 prefix of the local link (ie: 2001:db8::/64), then automatically generate an IPv6 		  address
+
+		* Using the IPv6 address ipv6 address prefix/prefix-length eui-64 , you need to manually enter the prefix
+				       Network	<-------|	|---> ex. /64
+
+		* using the IPv6 address autoconfig command, you dont need to enter the prefix.  the device uses NDP to learn the prefix used on the 		  local link
+
+		* The device will use EUI-64 to generate the interface ID, or it will be randomly generated (depending on the device/maker)
+
+Duplicate Address Detection (DAD) :
+
+		* One final point about NDP
+
+		* Duplicate Address Dectection allows hosts to check if other devices on the local link are using the same IPv6 address
+
+		* Any time an IPv6 enable interface initializes, it perform DAD
+
+		* DAD uses two messages you leaned earlier: NS and NA
+
+		* The host will send an NS to its own IPv6 address. if it doesnt get a reply, it knows the address is unique
+	
+		* if it gets a reply it means another host on the network is already using the address
+
+IPv6 Static Routing :
+		
+		* IPv6 routing works the same as IPv4 routing
+
+			- uses seperate routing tables as Ipv4
+
+		* Ipv4 routing is enable bby default
+			
+			- Ipv6 is disable by default , unicast routing to enable.
+
+		* If Ipv6 routing is disabled, the router will be able to send and receive Ipv6 traffic but will not route IPv6 traffic
+
+		* Connected network route is automatically added for each connected network
+
+		* Local host route is automatically added for each address configured on the router	
+
+		* Routes for link-local addresses are not added to the routing table
+
+		* Route Types :
+
+			- Directly Attached ( Static Route) : only exit interface is specified
+			
+				# ipv6 route destination/prefix-length exit-int
+
+			- Recursive Static Route : only the next host is specified
+
+				# ipv6 route destination/prefix-length next-hop
+
+			- Fully Specified static route : Both the exit int and next hop are specified
+
+				# ipv6 route destination/prefix-length exit-interface next-hop
+
+			- Default Route 
+
+				# ipv6 route ::/0 2001:db8:0:23::1
+
+				
+
+
+
+
+
+						
+
+
+
+
+
+
+
+
+					
