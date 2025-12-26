@@ -1,0 +1,158 @@
+
+COMMANDS :
+		- Standard Number Access Control List
+			# IP access-list <#> {deny | permit} ip-address wildcard-mask
+			- On interface 
+			# ip access-group <#> {in | out}
+
+		- display access-list
+			# sh access-list
+
+		- Standard Named Access Control List
+			# Ip access-list standard <name of the ACL>
+			- Add the Access Control Entry (ACE)
+			# [entry-number] {deny | permit} ip-address wildcard-mask
+
+Things Covered :
+	
+	- What are ACL's
+
+	- ACL Logic
+
+	- ACL Types 
+
+	- Standard Numbered ACL's
+
+	- Standard Named ACL's
+
+
+What are ACL's :
+
+	- Access Control List have multiple uses
+
+	- Function as a packet filter, Tell the router to permit or discard specific traffic
+
+	- ACL's filter traffic based on
+
+		# Source / Destination Ip address
+
+		# Source / Destination Layer 4 Ports 
+
+	- How Access Control List work
+
+		* ACL's are configured globaly on the router ( Global Config Mode )
+
+		* They are an ordered sequence of ACEs ( Access Control Entries )
+
+			ex ACL 1 :
+
+				  # If source Ip = 192.168.1.0/24, then permit
+
+				  # If source IP = 192.168.2.0/24, then deny
+
+				  # If source Ip = any, then permit
+
+		* Configured an ACL in Global config mode will not make the ACL Take effect
+
+			- The ACL must be applied to an interface
+		
+			- ACLs are applied either inbound or outbound
+
+		* ACLs are made up of one or more ACEs
+
+		* When the router checks a packet against the ACL, it processes the ACEs in order
+
+			Order :
+
+				- Top
+
+				- Bottom
+
+			- if the packets mathces one of the ACE in the ACL, the router take action,
+			  and stops proccessing the ACL.
+
+				- Entries below the matching will be ignored
+
+				ex  ACL 2:
+
+					# If source IP = 192.168.1.0/24, then permit 
+
+					# If source IP = 192.168.0.0/16 then deny ( Ignrored if top match )
+
+				* A maximum of One ACL can be applied to a single interface per direction
+
+					# Inbound 
+
+					# Outbound
+
+		* Implicit Deny :
+
+			- Comes into play when the packet doesn't match any entry in the ACL
+
+			- Tell the router to deny all traffic that doesnt match any configured entries in
+
+			  the ACL
+
+Access Control List Types :
+
+	- Standard Access Control List : Match based on Source IP Address only
+
+		-> Standard Numbered Access Control List
+
+		-> Standard Name Access Control List
+
+	- Extended Access Control List : Match based on Source / Destination IP, Source / Destination Port
+
+		-> Extended Numbered Access Control List
+
+		-> Extended Named Access Control List
+
+	* Standard Numbered (ACLs)
+
+		- Match Traffic based only on the source IP address of the packet
+ 
+		- Numbered ACL's are identified with a number ( ei. ACL 1, ACl 2, etc)
+
+		- Different types of ACLs have a different range of numbers that can be used
+			 
+			Protocol 		      Range
+
+			Standard IP  		1-99 and 1300-1999
+
+		- Standard ACL should be applied as close to the destination as possible
+
+	* Standard Named (ACLs)
+
+		- Match traffic based only on the source IP address of the packet
+
+		- Named ACLs are identified with a name (ie. 'Block_BOB')
+
+		- Standard named ACLs are configured by entering 'standard named ACL config mode', and then
+		  configuring each entry within that config mode
+		
+					
+
+
+
+			
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
