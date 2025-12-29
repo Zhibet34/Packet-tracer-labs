@@ -1,0 +1,163 @@
+
+Command :
+
+	# Numbered ACL configured in global config mode
+		- R1(config)# access-list 1 {deny | permit} {network | host}
+		- R1(config)# access-list 1 permit any --> Implexite allow
+
+	# Named ACL configured with subcommands in a separate config mode
+		- R1(config)# ip access-list standard < Name >
+		- R1(config-std-nacl)# deny < host >
+		- R1(config-std-nacl)# permit any --> Implexite allow
+
+	# Modern IOS can configure Numbered ACL the same way as Named ACL
+		- R1(config)# ip access-list standard <#>
+		- R1(config-std-nacl)# deny < host >
+		- R1(config-std-nacl)# permit any
+
+	# Display Access lists
+		- Do sh access-lists
+
+	# Delete Named ACL entry
+		R1:(config-std-nacl)# no entry-number
+
+	# You can add and entries between other entries
+	 	R1(config-std-nacl)#30 deny <network> <wildcard>
+				     |
+				 sequence number
+
+	# Extended ACL commands 
+		1.
+			R1(config)# access-list <#> { permit | deny } protocol <src-ip> <dest-ip> 
+
+		2. 
+			R1(config)# ip access-list extended { name | number }
+			R1(config-ext-nacl)# [seq-num] { permit | deny } protocol < src-ip> <dest-ip>
+
+		3. Matching the Protcol command
+			R1(config)# ip access-list extended {name | number}
+			R1(config-ext-nacl)# ip access-list extended {name |number} {deny | permit | any}
+			R1(config-ext-nacl)# ip access-list extended {name | number} {deny | permit | any} {Protcol | Number}
+			R1(config-ext-nacl)# ip access-list extended {name | number} {deny | permit | any} {Protcol | Number} <src-ip> <dest-ip>
+
+		4. Matching the source / destination IP address
+			R1(config-ext-nacl)# deny tcp any 10.0.0.0 0.0.0.255
+			         Permission <--|   |   |      |        |---> Wildcard mask  	
+					Protocol<--|   |      |
+						       |      |---> destination ip
+						       |--> source ip	
+		
+		5. Matching the TCP/UDP port numbers
+			R1(config-ext-nacl)# deny tcp src-ip < option > src-port-num dest-ip < option > dest-port-num
+								  |
+								  |----> eq = Equal
+									 gt = Greater than
+									 lt = Less than
+									 neq = Not
+									 range = 80 100    option
+			ex :								  /
+				R1(config-ext-nacl)# deny tcp any eq 80 host 1.1.1.1 eq 80
+						    src-ip <---|   \ /         | 
+								    |	     dst-ip					
+								 option		
+
+Things We'll Cover:
+
+	- Another way to configure numbered ACL 
+
+	- Editing ACL
+
+	- extended numbered and named ACL
+
+Extra Notes :
+
+	* Advantage of Named ACL config mode
+		- You can easily delete individual entries in the ACLs with <no> <entry-number>
+		- You can't delete individual entries in Numbered ACLs, you can only delete the entire ACL
+Editing Named ACL :
+
+	* You can delete individual entries in the ACL with < no > < sequence-number >
+
+	* You can insert new entries in between other entries by specify the sequence number
+
+	* Resequencing ACLs
+
+		- There is a resequencing function that help edit ACLs
+
+		- The command is 
+			R1(config)# ip access-list resequence 1 10 10 
+	    change sequence number of the first entry to 10   <--|  |--> Add 10 for every entry after that
+
+Extended ACLs :
+
+	* Extended ACLs function mostly the same as standard ACLs
+
+	* Can be Numbered or Named, just like standard ACLs
+
+		-> Numbered ACLs ranges: 100 - 199, 2000 - 2699
+
+	* Processed from Top to Bottom, just like standard ACLs
+
+	* Can match traffic based on more parameters, so they are more precise (and more complex) than standard ACLs
+
+	* Extended ACLs match traffic based on these parameters
+		- Layer 4 protocol/port
+		- source address
+		- destination address
+
+	* Protocols
+		- <0-255>
+		- ahp   ---> Authentication Header Protocol
+		- eigrp ---> Cisco's EIGRP routing protocol
+		- esp   ---> Encapsulation Security Payload
+		- gre   ---> Cisco's GRE tunneling
+		- icmp  ---> Internet Control Message Protocol
+		- igmp  ---> Internet Gateway Message Protocol
+		- ip    ---> Any Internet Protocol
+		- ipinip --> IP in IP Tunneling
+		- pcp   ---> Payload Compression Protocol
+
+	* Matching Source / Destination IP address
+		
+		- To specify a /32 source or destination you have to use the host option or specify the wildcard mask
+			# the address by itself wont work
+
+	* Matching the TCP/UDP port numbers  
+
+		- When matching TCP/UDP, you can optionally specify the source and/or destination port numbers to match
+
+			TCP			  UDP
+		   # FTP data(20)           # DHCP server(67)
+		   # FTP control(21)	    # DHCP client(68)
+		   # SSH(22)		    # TFTP(69)
+		   # Telnet(23)		    # SNMP agent(161)
+		   # SMTP(25)		    # SNMP manager(162)
+		   # HTTP(80)		    # Syslog(514)
+		   # POP3(110)
+		   # HTTPS(443	
+					    TCP & UDP 
+					    # DNS
+
+		 - Other options ( Not in the CCNA)
+			# Ack ---> match TCP ACK flag
+			# Fin ---> match TCP FIN flag
+			# Syn ---> match TCP SYN flag
+			# TTL ---> match packets with specific TTL value
+			# Descp ---> match packets with a specific DSCP value
+
+		- If you specify the protocol, source IP, Source Port, destination IP, destination port, etc a packet must match all of those 			  values to match the ACL entry
+			* Even if it matches all except one of the parameters, the packets wont match that entry of the ACL
+
+	  * Extended ACLs should be applied as close to the source as possible, to limit how far the packets travel in the network before being 	    denied
+			- standard access List are less specific, so if they are applied close to the source there is a risk of blocking more 
+			  traffic than intended
+			
+
+			
+
+
+
+
+
+
+
