@@ -1,0 +1,176 @@
+
+
+Commends :
+		- Cisco Discovery Protocol (CDP) 
+
+			1. sh cdp
+				---> Shows basic information about CDP (timers, version)
+
+			2. sh cdp traffic
+				---> Displays how many CDP messages have been sent and received 
+
+			3. sh cdp int
+				----> Display which int CDP is enabled on
+
+			4. sh cdp neighbors
+				----> List CDP neighbors and some basic information about each neighbor	
+
+			5. sh cdp neighbors detail
+				----> Lists each CDP neighbors with more detailed information 	
+	
+			6. sh cdp entry < device Id | Name >
+				----> Displays the same info as above, but for the specified neighbors only
+
+			7. R1(config)# [no] cdp run
+				----> Enable / Disable CDP globally
+			
+			9. R1(config-if)# [no] cdp enable
+				----> Enable / Disable CDP on specific int
+		
+			10. R1(config)# cdp timer seconds
+				----> configure the cdp timer
+
+			11. R1(config)# cdp holdtime seconds
+				----> configure the cdp holdtime
+			
+			12. R1*config)# [no] cdp advertise-v2
+				----> Enable / Disble CDPv2
+
+		- Link Layer Discovery Protocol (LLDP)
+
+			1. R1(config)# LLDP run
+				---> enable LLDP globally
+
+			2. R1(config-if)# LLDP transmit
+				---> enable LLDP on specific interface
+
+			3. R1(config-if)# LLDP receive
+				---> enable LLDP on specific interface
+
+			4. R1(config)# LLDP timer seconds
+				---> LLDP timer seconds
+
+			5. R1(config)# LLDP holdtime seconds
+				---> LLDP holdtime
+
+			6. R1(config)# LLDP reinit seconds
+				---> LLDP reinit timer
+			
+			7. R1# show LLDP
+				---> show basic information about LLDP (timer, version)
+
+			8. R1# show LLDP traffic
+				---> display how many LLDP messages have been sent and received
+
+			9. R1# show LLDP interface
+				---> Display which interface LLDP tx/rx is enabled on
+
+			10. R1# show LLDP neighbors
+				---> Lists LLDP neighbors and some basic information about each neighbor
+	
+			11. R1# show LLDP neighbors detail 
+				---> list each LLDP neighbor with more detailed information
+			
+			12. R1# show LLDP entry name
+				---> display the same info as above, but for the specified neighbor only
+			
+			
+
+Things Covered :
+
+		- Intro to layer 2 Discovery Protocols
+
+		- Cisco Discovery Protocol (CDP)
+
+		- Link Layer Discovery Protocol (LLDP)
+
+
+Layer 2 Discovery Protocols :
+
+	* Layer 2 discovery protocols such as CDP and LLDP share information with and discover information about neighboring
+	  (connected) devices
+
+	* Shared information includes Host-name, Ip address, Device type, etc
+
+	* CDP is a cisco proprietary protocol
+
+	* LLDP is an industry standard Protocol (IEEE 802.1AB)
+			# IEEE 802 --> creates a unified set of protocols that devices adhere to for communication
+	
+	* CDP and LLDP can be considered a security risk because they share information about devices in the network
+			# Admins have to decide weather or not to use them in the network or not
+					
+
+				ex :		   Hi, im R1. I'm a router  ------------->					                
+						 |					  |----------|
+						 |					  |	     |
+					R1 <-----|------>                                 |	     | SW1	
+	 					 |					  |	     |
+						 |  <-------------   Hi, im sw1, a switch |----------|
+
+Cisco Discovery Protocol (CDP):
+
+	* Cisco Proprietary protocol
+
+	* Enabled on Cisco devices by default :
+
+		- Routers
+
+		- Switches
+
+		- Firewalls
+
+		- Ip Phones
+
+	* CDP messages are periodically sent to Multicast Mac address 0100.0ccc.ccc
+
+	* When a device receives a CDP message, it processes and discard the message. It does NOT forward it to other 
+	  devices
+
+	* By default, CDP messages are sent once every 60 seconds
+
+	* By default, the CDP holdtime is 180 seconds. If no message is received in the 180 seconds, the neighbor is removed
+	  from the CDP neighbor table
+
+	* CDPv2 messages are sent by default
+
+Link Layer Discovery Protocol (LLDP):
+
+	* Industry Standard Protocol (IEEE 802.1AB)
+
+	* Disabled on Cisco devices by default, it must be manually enabled
+
+	* Devices can run CDP and LLDP at the same time
+
+	* LLDP messages are periodically sent to multicast MAC address 0180.c200.000E
+	
+	*  When device receives an LLDP message, it processes and discard the message. It does NOT forward it to other 		   devices
+
+	* LLDP messages are sent once every 30 seconds
+	
+	* LLDP holdtime is 120 seconds
+
+	* LLDP have an reinitialization delay. This will delay the initialization of LLDP by 2 seconds on a interface after 	  being enabled
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+
+
+
+	
+	
