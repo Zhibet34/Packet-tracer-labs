@@ -1,0 +1,147 @@
+
+Commands :
+		# ipconfig / release  ---> Client tells the router it doesnt need the ip address anymore
+		# ipconfig / renew ---> renew the DHCP lease agrement between client and server
+
+		# DHCP Server
+			R1(config)# ip dhcp excluded-address low-address high-address
+			R1(config)# ip dhcp excluded-address low-address high-address
+			R1(config)# ip dhcp pool pool-name
+			R1(dhcp-config)# network ip-address {/prefix-length | subnet-mask}
+			R1(dhcp-config)# dns-server ip-address
+			R1(dhcp-config)# domain-name domain-name
+			R1(dhcp-config)# default-router ip-address
+			R1(dhcp-config)# lease {days hours minutes | infinite}
+			R1# show ip dhcp binding
+
+		# DHCP Relay Agent
+			R1(config-if)# ip helper-address ip-address
+
+		# DHCP Client
+			R1(config-if)# ip address dhcp		
+
+Things Covered :
+
+		# The purpose of DHCP
+
+		# Basic Function OF DHCP
+
+		# Configuring DHCP in Cisco IOS
+
+The Purpose of DHCP :
+	
+		* DHCP is used to allow hosts to automatically/dynamically learn various aspects of their network 		  configuration such as :
+			- Ip address
+			- Subnet mask
+			- Default Gateway
+			- DNS server
+
+		* It is an essential part of modern networks
+
+		* Typically used for client 'client devices' such as workstations (PCs), Phones
+
+		* Devices such as routers, servers , etc are usually manualy configured
+
+		* In small networks (such as home networks) the router typically acts as the DHCP server for hosts 	          in the LAN
+
+		* In larger networks, the DHCP server is usually a windows / linux server
+
+Basic Functions Of DHCP :
+
+		* DHCP server 'lease' IP address to clients
+			- These leases are usually not permanent, and the client must up the address at the end of 			  the lease
+
+		 * DHCP Release 
+			- client tells the server its done using its current assigned IP address
+				- DHCP server uses UDP port 67
+				- DHCP client uses UDP port 68	
+
+		  * DHCP Renew 
+			- Client ask server to renew its Ip configuration using DHCP	
+
+		  * DHCP Discover
+			- Client send out a ICMP broadcast message in order to discover a DHCP server and ask for
+			  an ip address from that server
+
+		  * DHCP Offer
+			- A DHCP server receive the DHCP discover request coming from the client and offer an ip 			  address as a result 	
+
+		  * DHCP Request
+			- The PC send a unicast message to the server asking to use the Ip address the DHCP server
+			  offered 
+
+		  * DHCP Ack
+			- The DHCP server send an acknowledgement message to the client telling it, its permitted 			  to use the requested IP address
+
+		  * DHCP D-O-R-A
+
+				Discover		Client -> Server 		Broadcast
+				
+				Offer			Server -> Client		Broadcast or Unicast
+
+				Request			Client -> Server		Broadcast
+
+				Ack			Server -> Client		Broadcast or Unicast
+		
+				Release			Client -> Server		Unicast
+
+		   * DHCP Relay
+			- Some network engineers might choose to configure each router to act as the DHCP server 			  for its connected LANs
+
+			- However, Large enterprises often choose to use a centralized DHCP server
+
+			- If the server is centralized, it wont receive the DHCP clients broadcast DHCP messages
+				# Broadcast messages dont leave the local subnet
+
+				- To fix this, you can configure a router to act as a DHCP Relay Agent
+
+				- The Router will forward the clients broadcast DHCP messages to the remote DHCP 				  server as unicast messages
+			
+					ex :
+						   Src:XXXX  Dst:YYYY          Src:0000 Dst:ffff
+						<-------------------------    <------------------  Discover
+							Src:YYYY Dst:XXXX	   Src:XXXX Dst:ffff
+						Offer ---------------------->   --------------------->
+						   Src:XXXX  Dst:YYYY		Src:0000 Dst:ffff
+						<-----------------------    <---------------------  Request
+						      Src:YYYY Dst:XXXX		   Src:XXXX Dst:ffff
+						Ack ------------------------->    ---------------------->
+
+Configuration Of DHCP server :
+
+		- R1(config)#ip dhcp excluded-address 192.168.1.1 192.168.1.10 --> Range that wont be used by DHCP clients
+		
+		- R1(config)#ip dhcp pool <NAME> ---> create DHCP POOL
+
+		- R1(dhcp-config)#network <NETWORK /SUBNET> ---> specify the subnet of addresses to be assigned to client
+
+		- R1(dhcp-config)#dns-server 8.8.8.8 ---> specify the DNS server that DHCP clients should use
+
+		- R1(dhcp-config)#domain-name <name of domain> ---> specify the domain name of the network
+
+		- R1(dhcp-config)#default-router 192.168.1.1 ---> Specify the default gateway
+
+		- R1(dhcp-config)#lease 0 5 30 Specify the lease time or lease infine
+					| | |---> minutes	
+				       Day|
+					  |
+					Hours
+
+		* DHCP Replay Agent configuration
+
+			- R1(config)# int g0/1 ---> configure the int connected to the subnet of the client devices
+			
+			- R1(config-if)#ip helper-address 192.168.10.10 ---> configure the IP address of the DHCP server as the 			  helper address 
+
+		* DHCP Client configuration in IOS
+
+			- R2(config)# int g0/1
+
+			- R2(config-if)#ip address dhcp
+
+
+
+
+
+
+
